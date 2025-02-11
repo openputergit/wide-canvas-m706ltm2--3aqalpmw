@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoQuiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .neubrutalism {
+            border: 3px solid black;
+            box-shadow: 5px 5px 0px black;
+            transition: all 0.2s ease;
+        }
+        .neubrutalism:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 7px 7px 0px black;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-[#0f172a] text-white min-h-screen">
+    <!-- Login Page -->
+    <div id="loginPage" class="page active p-4">
+        <div class="max-w-md mx-auto mt-20 p-6 neubrutalism bg-[#22d3ee]">
+            <h2 class="text-2xl font-bold mb-6 text-black">Login to CryptoQuiz</h2>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <input type="text" id="username" placeholder="Username" required class="w-full p-2 neubrutalism bg-white text-black">
+                </div>
+                <div>
+                    <input type="email" id="email" placeholder="Email ID" required class="w-full p-2 neubrutalism bg-white text-black">
+                </div>
+                <button type="submit" class="w-full p-2 bg-[#f472b6] text-black neubrutalism font-bold">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Home Page -->
+    <div id="homePage" class="page p-4">
+        <nav class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold">CryptoQuiz</h1>
+            <button id="startQuiz" class="px-4 py-2 bg-[#22d3ee] text-black neubrutalism">Start Quiz</button>
+        </nav>
+
+        <div class="max-w-4xl mx-auto">
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold mb-6">About Cryptocurrency</h2>
+                <div class="neubrutalism bg-[#1e293b] p-6">
+                    <p>Cryptocurrency is a digital or virtual form of currency that uses cryptography for security. Bitcoin, created in 2009, was the first decentralized cryptocurrency and remains the most well-known.</p>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-3xl font-bold mb-6">Our Team</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Team members will be dynamically inserted here -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Quiz Page -->
+    <div id="quizPage" class="page p-4">
+        <div class="max-w-2xl mx-auto">
+            <div class="mb-4 flex justify-between items-center">
+                <h2 class="text-2xl font-bold">Stage <span id="currentStage">1</span></h2>
+                <div class="text-lg">Score: <span id="score">0</span></div>
+            </div>
+            <div id="quizContainer" class="neubrutalism bg-[#1e293b] p-6">
+                <!-- Quiz questions will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Page -->
+    <div id="feedbackPage" class="page p-4">
+        <div class="max-w-md mx-auto">
+            <div class="neubrutalism bg-[#1e293b] p-6">
+                <h2 class="text-2xl font-bold mb-6">Feedback Form</h2>
+                <form id="feedbackForm" class="space-y-4">
+                    <div>
+                        <textarea id="feedback" required class="w-full p-2 neubrutalism bg-white text-black" rows="4" placeholder="Share your experience..."></textarea>
+                    </div>
+                    <div>
+                        <select id="rating" required class="w-full p-2 neubrutalism bg-white text-black">
+                            <option value="">Select Rating</option>
+                            <option value="5">5 - Excellent</option>
+                            <option value="4">4 - Good</option>
+                            <option value="3">3 - Average</option>
+                            <option value="2">2 - Fair</option>
+                            <option value="1">1 - Poor</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full p-2 bg-[#22d3ee] text-black neubrutalism font-bold">Submit Feedback</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const teamMembers = [
+            { name: 'Alex Chen', role: 'Blockchain Developer', bio: 'Specializes in smart contract development and DeFi protocols.' },
+            { name: 'Sarah Johnson', role: 'Crypto Analyst', bio: 'Expert in market analysis and cryptocurrency trends.' },
+            { name: 'Mike Rodriguez', role: 'Security Expert', bio: 'Focuses on blockchain security and cryptocurrency protection.' },
+            { name: 'Emma Wilson', role: 'Product Manager', bio: 'Oversees product development and user experience.' },
+            { name: 'David Kim', role: 'Technical Lead', bio: 'Leads technical architecture and implementation.' },
+            { name: 'Lisa Wang', role: 'Community Manager', bio: 'Manages community engagement and education initiatives.' }
+        ];
+
+        const quizQuestions = {
+            1: [ // Easy
+                {
+                    question: 'What is Bitcoin?',
+                    options: ['A digital currency', 'A physical coin', 'A bank', 'A stock market'],
+                    correct: 0
+                },
+                // Add more questions for stage 1
+            ],
+            2: [ // Medium
+                {
+                    question: 'What is a blockchain?',
+                    options: ['A distributed ledger', 'A type of cryptocurrency', 'A computer program', 'A banking system'],
+                    correct: 0
+                },
+                // Add more questions for stage 2
+            ],
+            3: [ // Hard
+                {
+                    question: 'What is a smart contract?',
+                    options: [
+                        'Self-executing contract with terms written in code',
+                        'A paper contract',
+                        'A legal document',
+                        'A mobile app'
+                    ],
+                    correct: 0
+                },
+                // Add more questions for stage 3
+            ]
+        };
+
+        let currentUser = null;
+        let currentStage = 1;
+        let score = 0;
+
+        // Page Navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // Login Form
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            currentUser = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value
+            };
+            showPage('homePage');
+            renderTeamMembers();
+        });
+
+        // Render Team Members
+        function renderTeamMembers() {
+            const container = document.querySelector('#homePage .grid');
+            container.innerHTML = teamMembers.map(member => `
+                <div class="neubrutalism bg-[#1e293b] p-4">
+                    <div class="w-20 h-20 mb-4 bg-[#22d3ee] rounded-full mx-auto"></div>
+                    <h3 class="font-bold text-xl mb-2">${member.name}</h3>
+                    <p class="text-gray-400 mb-2">${member.role}</p>
+                    <p class="text-sm">${member.bio}</p>
+                </div>
+            `).join('');
+        }
+
+        // Quiz Logic
+        document.getElementById('startQuiz').addEventListener('click', () => {
+            showPage('quizPage');
+            loadQuizStage(currentStage);
+        });
+
+        function loadQuizStage(stage) {
+            document.getElementById('currentStage').textContent = stage;
+            const questions = quizQuestions[stage];
+            const container = document.getElementById('quizContainer');
+            
+            container.innerHTML = questions.map((q, qIndex) => `
+                <div class="mb-6">
+                    <p class="text-xl mb-4">${q.question}</p>
+                    <div class="space-y-2">
+                        ${q.options.map((opt, optIndex) => `
+                            <button class="w-full p-2 text-left neubrutalism bg-[#22d3ee] text-black"
+                                onclick="checkAnswer(${stage}, ${qIndex}, ${optIndex})">
+                                ${opt}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function checkAnswer(stage, questionIndex, selectedOption) {
+            const question = quizQuestions[stage][questionIndex];
+            if (selectedOption === question.correct) {
+                score += 10;
+                document.getElementById('score').textContent = score;
+            }
+
+            if (questionIndex === quizQuestions[stage].length - 1) {
+                if (stage < 3) {
+                    alert(`Congratulations! Moving to Stage ${stage + 1}`);
+                    currentStage++;
+                    loadQuizStage(currentStage);
+                } else {
+                    alert('Quiz completed! Please provide your feedback.');
+                    showPage('feedbackPage');
+                }
+            }
+        }
+
+        // Feedback Form
+        document.getElementById('feedbackForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Thank you for your feedback! You will now be logged out.');
+            currentUser = null;
+            score = 0;
+            currentStage = 1;
+            showPage('loginPage');
+        });
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
